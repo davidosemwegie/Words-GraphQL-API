@@ -2,7 +2,15 @@
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-export const typeDefs = /* GraphQL */ `type AggregateUser {
+export const typeDefs = /* GraphQL */ `type AggregateTag {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type AggregateVerse {
   count: Int!
 }
 
@@ -13,12 +21,21 @@ type BatchPayload {
 scalar Long
 
 type Mutation {
+  createTag(data: TagCreateInput!): Tag!
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteManyTags(where: TagWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createVerse(data: VerseCreateInput!): Verse!
+  updateVerse(data: VerseUpdateInput!, where: VerseWhereUniqueInput!): Verse
+  updateManyVerses(data: VerseUpdateManyMutationInput!, where: VerseWhereInput): BatchPayload!
+  upsertVerse(where: VerseWhereUniqueInput!, create: VerseCreateInput!, update: VerseUpdateInput!): Verse!
+  deleteVerse(where: VerseWhereUniqueInput!): Verse
+  deleteManyVerses(where: VerseWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -39,19 +56,132 @@ type PageInfo {
 }
 
 type Query {
+  tag(where: TagWhereUniqueInput!): Tag
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
+  tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  verse(where: VerseWhereUniqueInput!): Verse
+  verses(where: VerseWhereInput, orderBy: VerseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Verse]!
+  versesConnection(where: VerseWhereInput, orderBy: VerseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VerseConnection!
   node(id: ID!): Node
 }
 
 type Subscription {
+  tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  verse(where: VerseSubscriptionWhereInput): VerseSubscriptionPayload
+}
+
+type Tag {
+  id: ID!
+}
+
+type TagConnection {
+  pageInfo: PageInfo!
+  edges: [TagEdge]!
+  aggregate: AggregateTag!
+}
+
+input TagCreateInput {
+  id: ID
+}
+
+input TagCreateManyInput {
+  create: [TagCreateInput!]
+  connect: [TagWhereUniqueInput!]
+}
+
+type TagEdge {
+  node: Tag!
+  cursor: String!
+}
+
+enum TagOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type TagPreviousValues {
+  id: ID!
+}
+
+input TagScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [TagScalarWhereInput!]
+  OR: [TagScalarWhereInput!]
+  NOT: [TagScalarWhereInput!]
+}
+
+type TagSubscriptionPayload {
+  mutation: MutationType!
+  node: Tag
+  updatedFields: [String!]
+  previousValues: TagPreviousValues
+}
+
+input TagSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TagWhereInput
+  AND: [TagSubscriptionWhereInput!]
+  OR: [TagSubscriptionWhereInput!]
+  NOT: [TagSubscriptionWhereInput!]
+}
+
+input TagUpdateManyInput {
+  create: [TagCreateInput!]
+  delete: [TagWhereUniqueInput!]
+  connect: [TagWhereUniqueInput!]
+  set: [TagWhereUniqueInput!]
+  disconnect: [TagWhereUniqueInput!]
+  deleteMany: [TagScalarWhereInput!]
+}
+
+input TagWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [TagWhereInput!]
+  OR: [TagWhereInput!]
+  NOT: [TagWhereInput!]
+}
+
+input TagWhereUniqueInput {
+  id: ID
 }
 
 type User {
   id: ID!
   name: String!
+  saved(where: VerseWhereInput, orderBy: VerseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Verse!]
 }
 
 type UserConnection {
@@ -61,6 +191,17 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  id: ID
+  name: String!
+  saved: VerseCreateManyWithoutSavedInput
+}
+
+input UserCreateManyWithoutSavedInput {
+  create: [UserCreateWithoutSavedInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateWithoutSavedInput {
   id: ID
   name: String!
 }
@@ -80,6 +221,40 @@ enum UserOrderByInput {
 type UserPreviousValues {
   id: ID!
   name: String!
+}
+
+input UserScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [UserScalarWhereInput!]
+  OR: [UserScalarWhereInput!]
+  NOT: [UserScalarWhereInput!]
 }
 
 type UserSubscriptionPayload {
@@ -102,10 +277,47 @@ input UserSubscriptionWhereInput {
 
 input UserUpdateInput {
   name: String
+  saved: VerseUpdateManyWithoutSavedInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
 }
 
 input UserUpdateManyMutationInput {
   name: String
+}
+
+input UserUpdateManyWithoutSavedInput {
+  create: [UserCreateWithoutSavedInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutSavedInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutSavedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
+}
+
+input UserUpdateWithoutSavedDataInput {
+  name: String
+}
+
+input UserUpdateWithWhereUniqueWithoutSavedInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutSavedDataInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutSavedInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutSavedDataInput!
+  create: UserCreateWithoutSavedInput!
 }
 
 input UserWhereInput {
@@ -137,12 +349,244 @@ input UserWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  saved_every: VerseWhereInput
+  saved_some: VerseWhereInput
+  saved_none: VerseWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
 }
 
 input UserWhereUniqueInput {
+  id: ID
+}
+
+type Verse {
+  id: ID!
+  body: String!
+  reference: String!
+  saved(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
+}
+
+type VerseConnection {
+  pageInfo: PageInfo!
+  edges: [VerseEdge]!
+  aggregate: AggregateVerse!
+}
+
+input VerseCreateInput {
+  id: ID
+  body: String!
+  reference: String!
+  saved: UserCreateManyWithoutSavedInput
+  tags: TagCreateManyInput
+}
+
+input VerseCreateManyWithoutSavedInput {
+  create: [VerseCreateWithoutSavedInput!]
+  connect: [VerseWhereUniqueInput!]
+}
+
+input VerseCreateWithoutSavedInput {
+  id: ID
+  body: String!
+  reference: String!
+  tags: TagCreateManyInput
+}
+
+type VerseEdge {
+  node: Verse!
+  cursor: String!
+}
+
+enum VerseOrderByInput {
+  id_ASC
+  id_DESC
+  body_ASC
+  body_DESC
+  reference_ASC
+  reference_DESC
+}
+
+type VersePreviousValues {
+  id: ID!
+  body: String!
+  reference: String!
+}
+
+input VerseScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  reference: String
+  reference_not: String
+  reference_in: [String!]
+  reference_not_in: [String!]
+  reference_lt: String
+  reference_lte: String
+  reference_gt: String
+  reference_gte: String
+  reference_contains: String
+  reference_not_contains: String
+  reference_starts_with: String
+  reference_not_starts_with: String
+  reference_ends_with: String
+  reference_not_ends_with: String
+  AND: [VerseScalarWhereInput!]
+  OR: [VerseScalarWhereInput!]
+  NOT: [VerseScalarWhereInput!]
+}
+
+type VerseSubscriptionPayload {
+  mutation: MutationType!
+  node: Verse
+  updatedFields: [String!]
+  previousValues: VersePreviousValues
+}
+
+input VerseSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: VerseWhereInput
+  AND: [VerseSubscriptionWhereInput!]
+  OR: [VerseSubscriptionWhereInput!]
+  NOT: [VerseSubscriptionWhereInput!]
+}
+
+input VerseUpdateInput {
+  body: String
+  reference: String
+  saved: UserUpdateManyWithoutSavedInput
+  tags: TagUpdateManyInput
+}
+
+input VerseUpdateManyDataInput {
+  body: String
+  reference: String
+}
+
+input VerseUpdateManyMutationInput {
+  body: String
+  reference: String
+}
+
+input VerseUpdateManyWithoutSavedInput {
+  create: [VerseCreateWithoutSavedInput!]
+  delete: [VerseWhereUniqueInput!]
+  connect: [VerseWhereUniqueInput!]
+  set: [VerseWhereUniqueInput!]
+  disconnect: [VerseWhereUniqueInput!]
+  update: [VerseUpdateWithWhereUniqueWithoutSavedInput!]
+  upsert: [VerseUpsertWithWhereUniqueWithoutSavedInput!]
+  deleteMany: [VerseScalarWhereInput!]
+  updateMany: [VerseUpdateManyWithWhereNestedInput!]
+}
+
+input VerseUpdateManyWithWhereNestedInput {
+  where: VerseScalarWhereInput!
+  data: VerseUpdateManyDataInput!
+}
+
+input VerseUpdateWithoutSavedDataInput {
+  body: String
+  reference: String
+  tags: TagUpdateManyInput
+}
+
+input VerseUpdateWithWhereUniqueWithoutSavedInput {
+  where: VerseWhereUniqueInput!
+  data: VerseUpdateWithoutSavedDataInput!
+}
+
+input VerseUpsertWithWhereUniqueWithoutSavedInput {
+  where: VerseWhereUniqueInput!
+  update: VerseUpdateWithoutSavedDataInput!
+  create: VerseCreateWithoutSavedInput!
+}
+
+input VerseWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  reference: String
+  reference_not: String
+  reference_in: [String!]
+  reference_not_in: [String!]
+  reference_lt: String
+  reference_lte: String
+  reference_gt: String
+  reference_gte: String
+  reference_contains: String
+  reference_not_contains: String
+  reference_starts_with: String
+  reference_not_starts_with: String
+  reference_ends_with: String
+  reference_not_ends_with: String
+  saved_every: UserWhereInput
+  saved_some: UserWhereInput
+  saved_none: UserWhereInput
+  tags_every: TagWhereInput
+  tags_some: TagWhereInput
+  tags_none: TagWhereInput
+  AND: [VerseWhereInput!]
+  OR: [VerseWhereInput!]
+  NOT: [VerseWhereInput!]
+}
+
+input VerseWhereUniqueInput {
   id: ID
 }
 `

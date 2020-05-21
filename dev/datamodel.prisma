@@ -1,4 +1,17 @@
 type User {
   id: ID! @id
   name: String!
+  saved: [Verse!] 
+}
+
+type Verse {
+  id: ID! @id
+  body: String!
+  reference: String!
+  saved: [User!] 
+  tags: [Tag!] 
+}
+
+type Tag {
+  id: ID! @id 
 }

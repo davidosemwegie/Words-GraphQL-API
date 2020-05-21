@@ -1,0 +1,17 @@
+type User {
+  id: ID! @id
+  name: String!
+  saved: [Verse!] @relation(name: "UsertoVerse", onDelete: SET_NULL)
+}
+
+type Verse {
+  id: ID! @id
+  body: String!
+  reference: String!
+  saved: [User!] @relation(name: "UsertoVerse", onDelete: SET_NULL)
+  tags: [Tag!] @relation(name: "VerseToTag", onDelete: SET_NULL)
+}
+
+type Tag {
+  id: String @id @relation(name: "VerseToTag", onDelete: SET_NULL)
+}
