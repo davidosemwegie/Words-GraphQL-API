@@ -1,0 +1,6 @@
+endpoint: https://kl-words-app-prod-3a44e8e620.herokuapp.com/kl-words-app/prod
+datamodel: datamodel.prisma
+
+generate:
+  - generator: typescript-client
+    output: ./generated/prisma-client/
